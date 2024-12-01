@@ -1,4 +1,5 @@
-﻿<Window x:Class="Mastermind.MainWindow"
+﻿<Window Background="BlanchedAlmond"
+    x:Class="Mastermind.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MasterMind" Height="1200" Width="800">
