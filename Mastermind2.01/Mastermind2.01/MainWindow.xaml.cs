@@ -16,6 +16,7 @@ namespace Mastermind
         private const int maxAttempts = 10;
         private int countdownSeconds = 0;
         private const int maxTime = 10;
+        private bool gameEnded = false;
 
         public MainWindow()
         {
@@ -212,6 +213,13 @@ namespace Mastermind
 
         private void EndGame(bool isWin)
         {
+            if (gameEnded)
+            {
+                return;
+            }
+
+            gameEnded = true;
+
             string message = isWin ? "Gefeliciteerd! Je hebt gewonnen!" : $"Helaas, je hebt verloren. De geheime code was: {string.Join(", ", Random)}";
             MessageBoxResult result = MessageBox.Show(message + "\nWil je opnieuw spelen?", "Einde Spel", MessageBoxButton.YesNo, MessageBoxImage.Information);
 
@@ -227,6 +235,7 @@ namespace Mastermind
 
         private void ResetGame()
         {
+            gameEnded = false;
             attempts = 1;
             countdownSeconds = 0;
             RandomKleur();
@@ -239,6 +248,26 @@ namespace Mastermind
         private void UpdateTitle()
         {
             this.Title = $"Poging {attempts}/{maxAttempts} | Tijd: {countdownSeconds}s";
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            if (!gameEnded)
+            {
+                MessageBoxResult result = MessageBox.Show("Je probeert het spel vroegtijdig te beëindigen. Weet je zeker dat je de applicatie wilt afsluiten?", "Beëindigen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    base.OnClosing(e);
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                base.OnClosing(e);
+            }
         }
     }
 }
