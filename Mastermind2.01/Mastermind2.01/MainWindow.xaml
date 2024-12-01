@@ -14,12 +14,13 @@
         <Label x:Name="Label3" Background="Transparent" HorizontalAlignment="Left" Margin="446,10,0,0" VerticalAlignment="Top" Width="120" Height="226" BorderBrush="Black" BorderThickness="1" />
         <Label x:Name="Label4" Background="Transparent" HorizontalAlignment="Left" Margin="633,10,0,0" VerticalAlignment="Top" Width="120" Height="226" BorderBrush="Black" BorderThickness="1" />
 
-        <!-- Button voor het controleren van de code -->
         <Button x:Name="CheckCodeButton" Content="Check Code" HorizontalAlignment="Left" Margin="288,328,0,0" VerticalAlignment="Top" Height="57" Width="152" Click="CheckCodeButton_Click"/>
 
         <Label x:Name="timerLabel" Content="Tijd: 0s" HorizontalAlignment="Left" Margin="20,367,0,0" VerticalAlignment="Top" Height="34" Width="108"/>
 
-        <StackPanel x:Name="PreviousGuessesPanel" HorizontalAlignment="Left" Margin="43,400,0,0" VerticalAlignment="Top" Width="700" Height="566"/>
+        <Label x:Name="ScoreLabel" Content="Score: 0" HorizontalAlignment="Left" Margin="20,384,0,0" VerticalAlignment="Top" Height="34" Width="150"/>
+
+        <StackPanel x:Name="PreviousGuessesPanel" HorizontalAlignment="Left" Margin="100,384,0,0" VerticalAlignment="Top" Width="700" Height="474"/>
 
         <TextBox x:Name="DebugTextBox" HorizontalAlignment="Left" Margin="10,510,0,0" VerticalAlignment="Top" Width="780" Height="30" Visibility="Hidden" IsReadOnly="True"/>
     </Grid>

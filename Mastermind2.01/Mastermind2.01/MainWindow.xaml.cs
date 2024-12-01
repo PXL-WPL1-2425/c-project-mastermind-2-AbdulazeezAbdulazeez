@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -14,10 +13,9 @@ namespace Mastermind
         private List<string> kleuren = new List<string> { "Red", "Yellow", "Orange", "White", "Green", "Blue" };
         private List<string> Random = new List<string>();
         private int attempts = 1;
-        private const int maxAttempts = 10; 
-        private bool isDebugMode = false; 
-        private int countdownSeconds = 0; 
-        private const int maxTime = 10; 
+        private const int maxAttempts = 10;
+        private int countdownSeconds = 0;
+        private const int maxTime = 10;
 
         public MainWindow()
         {
@@ -26,7 +24,7 @@ namespace Mastermind
             ComboBoxes();
             timer.Tick += Timer_Tick;
             timer.Interval = new TimeSpan(0, 0, 1);
-            StartCountdown(); 
+            StartCountdown();
         }
 
         private void RandomKleur()
@@ -40,8 +38,8 @@ namespace Mastermind
             }
 
             DebugTextBox.Text = $"Geheime code: {string.Join(", ", Random)}";
-            StartCountdown(); // Timer resetten bij het genereren van een nieuwe code
-            UpdateTitle(); // Titel bijwerken
+            StartCountdown();
+            UpdateTitle();
         }
 
         private void ComboBoxes()
@@ -86,20 +84,20 @@ namespace Mastermind
 
             if (countdownSeconds >= maxTime)
             {
-                StopCountdown(); // Timer stoppen als tijd is verstreken
-                LoseTurn(); // Beurt verliezen
+                StopCountdown();
+                LoseTurn();
             }
         }
 
         private void StartCountdown()
         {
-            countdownSeconds = 0; // Reset de timer
-            timer.Start();        // Start de timer
+            countdownSeconds = 0;
+            timer.Start();
         }
 
         private void StopCountdown()
         {
-            timer.Stop(); // Timer stoppen
+            timer.Stop();
         }
 
         private void LoseTurn()
@@ -109,12 +107,12 @@ namespace Mastermind
 
             if (attempts > maxAttempts)
             {
-                EndGame(false); // Spel beëindigen als maximale pogingen is bereikt
+                EndGame(false);
             }
             else
             {
-                UpdateTitle(); // Titel bijwerken na verlies beurt
-                StartCountdown(); // Timer opnieuw starten voor de volgende beurt
+                UpdateTitle();
+                StartCountdown();
             }
         }
 
@@ -125,31 +123,61 @@ namespace Mastermind
             string guess3 = ComboBox3.SelectedItem?.ToString();
             string guess4 = ComboBox4.SelectedItem?.ToString();
 
-            CheckGuesses(guess1, guess2, guess3, guess4);
+            int score = CheckGuesses(guess1, guess2, guess3, guess4);
 
-            StopCountdown(); 
+            ScoreLabel.Content = $"Score: {score}";
+
+            StopCountdown();
 
             if (attempts < maxAttempts)
             {
                 attempts++;
-                StartCountdown(); 
-                UpdateTitle(); 
+                StartCountdown();
+                UpdateTitle();
             }
             else
             {
-                EndGame(false); 
+                EndGame(false);
             }
         }
 
-        private void CheckGuesses(string guess1, string guess2, string guess3, string guess4)
+        private int CheckGuesses(string guess1, string guess2, string guess3, string guess4)
         {
             List<string> guesses = new List<string> { guess1, guess2, guess3, guess4 };
 
             StackPanel feedbackPanel = new StackPanel
             {
-                Orientation = Orientation.Horizontal, 
+                Orientation = Orientation.Horizontal,
                 Margin = new Thickness(5)
             };
+
+            int correctPositions = 0;
+            int correctColors = 0;
+            int wrongColors = 0;
+
+            List<string> secretCode = new List<string>(Random);
+
+            for (int i = 0; i < guesses.Count; i++)
+            {
+                if (guesses[i] == secretCode[i])
+                {
+                    correctPositions++;
+                    secretCode[i] = null;
+                }
+            }
+
+            for (int i = 0; i < guesses.Count; i++)
+            {
+                if (guesses[i] != null && secretCode.Contains(guesses[i]))
+                {
+                    correctColors++;
+                    secretCode[secretCode.IndexOf(guesses[i])] = null;
+                }
+            }
+
+            wrongColors = guesses.Count - (correctPositions + correctColors);
+
+            int score = (wrongColors * 2) + (correctColors * 1);
 
             for (int i = 0; i < guesses.Count; i++)
             {
@@ -158,11 +186,10 @@ namespace Mastermind
                     Width = 20,
                     Height = 20,
                     Margin = new Thickness(5),
-                    BorderBrush = Brushes.Red, 
+                    BorderBrush = Brushes.Red,
                     BorderThickness = new Thickness(1)
                 };
 
-                // Verwerk de feedback (rood/wit)
                 if (guesses[i] == Random[i])
                 {
                     feedbackBorder.Background = (Brush)new BrushConverter().ConvertFromString(guesses[i]);
@@ -175,14 +202,15 @@ namespace Mastermind
                 feedbackPanel.Children.Add(feedbackBorder);
             }
 
-            PreviousGuessesPanel.Children.Add(feedbackPanel); 
+            PreviousGuessesPanel.Children.Add(feedbackPanel);
+            return score;
         }
 
         private void EndGame(bool isWin)
         {
             string message = isWin ? "Gefeliciteerd! Je hebt gewonnen!" : "Helaas, je hebt verloren.";
             MessageBox.Show(message, "Einde Spel", MessageBoxButton.OK, MessageBoxImage.Information);
-            RandomKleur(); 
+            RandomKleur();
         }
 
         private void UpdateTitle()
