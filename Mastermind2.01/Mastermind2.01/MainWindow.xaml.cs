@@ -129,7 +129,11 @@ namespace Mastermind
 
             StopCountdown();
 
-            if (attempts < maxAttempts)
+            if (score == 0)
+            {
+                EndGame(true);
+            }
+            else if (attempts < maxAttempts)
             {
                 attempts++;
                 StartCountdown();
@@ -208,15 +212,33 @@ namespace Mastermind
 
         private void EndGame(bool isWin)
         {
-            string message = isWin ? "Gefeliciteerd! Je hebt gewonnen!" : "Helaas, je hebt verloren.";
-            MessageBox.Show(message, "Einde Spel", MessageBoxButton.OK, MessageBoxImage.Information);
+            string message = isWin ? "Gefeliciteerd! Je hebt gewonnen!" : $"Helaas, je hebt verloren. De geheime code was: {string.Join(", ", Random)}";
+            MessageBoxResult result = MessageBox.Show(message + "\nWil je opnieuw spelen?", "Einde Spel", MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                ResetGame();
+            }
+            else
+            {
+                Close();
+            }
+        }
+
+        private void ResetGame()
+        {
+            attempts = 1;
+            countdownSeconds = 0;
             RandomKleur();
+            ScoreLabel.Content = "Score: 0";
+            PreviousGuessesPanel.Children.Clear();
+            UpdateTitle();
+            StartCountdown();
         }
 
         private void UpdateTitle()
         {
-            string secretCode = string.Join(", ", Random);
-            this.Title = $"Poging {attempts}/{maxAttempts} | Tijd: {countdownSeconds}s | Geheime Code: {secretCode}";
+            this.Title = $"Poging {attempts}/{maxAttempts} | Tijd: {countdownSeconds}s";
         }
     }
 }
